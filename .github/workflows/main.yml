@@ -19,13 +19,25 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Create Complete Android Project Structure
+    - name: Create Bulletproof Android Project Structure
       run: |
-        # Directories banayein
+        # Folders create karein
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/layout
+        mkdir -p app/src/main/res/values
 
-        # AndroidManifest.xml (Sirf ek hi MainActivity rakhi hai taake crash na ho)
+        # styles.xml (Theme configuration taake AppCompat crash na ho)
+        cat << 'EOF' > app/src/main/res/values/styles.xml
+        <resources>
+            <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+                <item name="colorPrimary">#007ACC</item>
+                <item name="colorPrimaryDark">#1E222B</item>
+                <item name="colorAccent">#00D2FF</item>
+            </style>
+        </resources>
+        EOF
+
+        # AndroidManifest.xml
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -34,7 +46,7 @@ jobs:
                 android:allowBackup="true"
                 android:label="Qamar Steel Works"
                 android:supportsRtl="true"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+                android:theme="@style/AppTheme">
                 
                 <activity
                     android:name=".MainActivity"
@@ -49,7 +61,7 @@ jobs:
         </manifest>
         EOF
 
-        # MainActivity.kt (Handles both Login & Dashboard in one place)
+        # MainActivity.kt (Stable Single-Activity Logic)
         cat << 'EOF' > app/src/main/java/com/qamar/steelworks/MainActivity.kt
         package com.qamar.steelworks
 
@@ -64,169 +76,131 @@ jobs:
         class MainActivity : AppCompatActivity() {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                showLoginScreen()
+                loadLoginUI()
             }
 
-            private fun showLoginScreen() {
-                setContentView(R.layout.activity_login)
+            private fun loadLoginUI() {
+                val layout = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(60, 60, 60, 60)
+                    setBackgroundColor(android.graphics.Color.parseColor("#1E222B"))
+                    gravity = android.view.Gravity.CENTER
+                }
 
-                val etUsername = findViewById<EditText>(R.id.etUsername)
-                val etPassword = findViewById<EditText>(R.id.etPassword)
-                val btnLogin = findViewById<Button>(R.id.btnLogin)
-                val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
+                val title = TextView(this).apply {
+                    text = "QAMAR STEEL\n& Welding Works"
+                    textSize = 20f
+                    setTextColor(android.graphics.Color.WHITE)
+                    gravity = android.view.Gravity.CENTER
+                    setPadding(0, 0, 0, 50)
+                }
+                layout.addView(title)
 
-                btnLogin.setOnClickListener {
-                    val user = etUsername.text.toString().trim()
-                    val pass = etPassword.text.toString().trim()
+                val userEt = EditText(this).apply {
+                    hint = "Username"
+                    setHintTextColor(android.graphics.Color.parseColor("#5A6470"))
+                    setTextColor(android.graphics.Color.WHITE)
+                    setBackgroundColor(android.graphics.Color.parseColor("#2B303C"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(userEt)
 
-                    if ((user == "Admin" && pass == "Admin123") || pass == "Admin4214") {
-                        showDashboardScreen()
+                // Spacer
+                val spacer = TextView(this).apply { height = 30 }
+                layout.addView(spacer)
+
+                val passEt = EditText(this).apply {
+                    hint = "Password"
+                    inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    setHintTextColor(android.graphics.Color.parseColor("#5A6470"))
+                    setTextColor(android.graphics.Color.WHITE)
+                    setBackgroundColor(android.graphics.Color.parseColor("#2B303C"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(passEt)
+
+                val spacer2 = TextView(this).apply { height = 50 }
+                layout.addView(spacer2)
+
+                val loginBtn = Button(this).apply {
+                    text = "LOGIN"
+                    setBackgroundColor(android.graphics.Color.parseColor("#007ACC"))
+                    setTextColor(android.graphics.Color.WHITE)
+                }
+                layout.addView(loginBtn)
+
+                val forgotTv = TextView(this).apply {
+                    text = "Forgot Password?"
+                    setTextColor(android.graphics.Color.parseColor("#00D2FF"))
+                    setPadding(0, 40, 0, 0)
+                    gravity = android.view.Gravity.END
+                }
+                layout.addView(forgotTv)
+
+                val copyRight = TextView(this).apply {
+                    text = "© Mr. Dhoom Tech"
+                    textSize = 12f
+                    setTextColor(android.graphics.Color.parseColor("#5A6470"))
+                    gravity = android.view.Gravity.CENTER
+                    setPadding(0, 80, 0, 0)
+                }
+                layout.addView(copyRight)
+
+                loginBtn.setOnClickListener {
+                    val u = userEt.text.toString().trim()
+                    val p = passEt.text.toString().trim()
+                    if ((u == "Admin" && p == "Admin123") || p == "Admin4214") {
+                        loadDashboardUI()
                     } else {
                         Toast.makeText(this, "Invalid Username or Password!", Toast.LENGTH_SHORT).show()
                     }
                 }
 
-                tvForgotPassword.setOnClickListener {
+                forgotTv.setOnClickListener {
                     Toast.makeText(this, "contact provider please", Toast.LENGTH_LONG).show()
                 }
+
+                setContentView(layout)
             }
 
-            private fun showDashboardScreen() {
-                setContentView(R.layout.activity_main)
+            private fun loadDashboardUI() {
+                val layout = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(40, 40, 40, 40)
+                    setBackgroundColor(android.graphics.Color.parseColor("#15181E"))
+                }
+
+                val title = TextView(this).apply {
+                    text = "QAMAR STEEL & Welding Works"
+                    textSize = 18f
+                    setTypeface(null, android.graphics.Typeface.BOLD)
+                    setTextColor(android.graphics.Color.WHITE)
+                    setPadding(0, 0, 0, 30)
+                }
+                layout.addView(title)
+
+                val card1 = TextView(this).apply {
+                    text = "📦 Order 3001 | Ali Traders\nStatus: In-Progress | Rs. 75,000"
+                    setTextColor(android.graphics.Color.WHITE)
+                    setBackgroundColor(android.graphics.Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(card1)
+
+                val spacer = TextView(this).apply { height = 20 }
+                layout.addView(spacer)
+
+                val card2 = TextView(this).apply {
+                    text = "📦 Order 3002 | Usman Bhai\nStatus: Ready | Rs. 18,000"
+                    setTextColor(android.graphics.Color.WHITE)
+                    setBackgroundColor(android.graphics.Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(card2)
+
+                setContentView(layout)
             }
         }
-        EOF
-
-        # activity_login.xml
-        cat << 'EOF' > app/src/main/res/layout/activity_login.xml
-        <?xml version="1.0" encoding="utf-8"?>
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="#1E222B"
-            android:padding="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⚙️"
-                android:textSize="40sp"
-                android:textColor="#00D2FF"
-                android:layout_gravity="center"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="QAMAR STEEL"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="&amp; Welding Works"
-                android:textSize="14sp"
-                android:textColor="#A0AAB2"
-                android:layout_gravity="center"
-                android:layout_marginBottom="32dp"/>
-
-            <EditText
-                android:id="@+id/etUsername"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Username"
-                android:textColorHint="#5A6470"
-                android:textColor="#FFFFFF"
-                android:background="#2B303C"
-                android:padding="12dp"
-                android:layout_marginBottom="16dp"/>
-
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:textColorHint="#5A6470"
-                android:textColor="#FFFFFF"
-                android:background="#2B303C"
-                android:padding="12dp"
-                android:layout_marginBottom="24dp"/>
-
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="Login"
-                android:backgroundTint="#007ACC"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
-
-            <TextView
-                android:id="@+id/tvForgotPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Forgot Password?"
-                android:textColor="#00D2FF"
-                android:layout_gravity="end"
-                android:clickable="true"
-                android:focusable="true"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="© Mr. Dhoom Tech"
-                android:textSize="10sp"
-                android:textColor="#5A6470"
-                android:layout_gravity="center"
-                android:layout_marginTop="40dp"/>
-
-        </LinearLayout>
-        EOF
-
-        # activity_main.xml (Dashboard Layout)
-        cat << 'EOF' > app/src/main/res/layout/activity_main.xml
-        <?xml version="1.0" encoding="utf-8"?>
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#15181E"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="QAMAR STEEL &amp; Welding Works"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="16dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="#1E222B"
-                    android:padding="12dp">
-                    
-                    <TextView android:text="3001 | Ali Traders - Steel Gate\nStatus: In-Progress | Rs. 75,000" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_marginBottom="8dp"/>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2B303C" android:layout_marginBottom="8dp"/>
-                    <TextView android:text="3002 | Usman Bhai - Window Grill\nStatus: Ready | Rs. 18,000" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_marginBottom="8dp"/>
-                </LinearLayout>
-
-            </LinearLayout>
-        </ScrollView>
         EOF
 
         # gradle.properties
@@ -300,7 +274,6 @@ jobs:
             implementation 'androidx.core:core-ktx:1.12.0'
             implementation 'androidx.appcompat:appcompat:1.6.1'
             implementation 'com.google.android.material:material:1.11.0'
-            implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
         }
         EOF
 
