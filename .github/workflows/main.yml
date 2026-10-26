@@ -25,7 +25,7 @@ jobs:
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/layout
 
-        # AndroidManifest.xml (Icon reference hata kar clean banaya gaya hai)
+        # AndroidManifest.xml (Both Activities properly registered)
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -203,7 +203,7 @@ jobs:
         </LinearLayout>
         EOF
 
-        # activity_main.xml
+        # activity_main.xml (Dashboard Layout)
         cat << 'EOF' > app/src/main/res/layout/activity_main.xml
         <?xml version="1.0" encoding="utf-8"?>
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
