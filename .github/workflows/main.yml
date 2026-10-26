@@ -25,7 +25,224 @@ jobs:
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/layout
 
-        # gradle.properties (AndroidX aur Jetifier enable karne ke liye)
+        # AndroidManifest.xml (Icon reference hata kar clean banaya gaya hai)
+        cat << 'EOF' > app/src/main/AndroidManifest.xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+            <application
+                android:allowBackup="true"
+                android:label="Qamar Steel Works"
+                android:supportsRtl="true"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+                
+                <activity
+                    android:name=".LoginActivity"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                </activity>
+
+                <activity
+                    android:name=".MainActivity"
+                    android:exported="false" />
+                    
+            </application>
+        </manifest>
+        EOF
+
+        # LoginActivity.kt
+        cat << 'EOF' > app/src/main/java/com/qamar/steelworks/LoginActivity.kt
+        package com.qamar.steelworks
+
+        import android.content.Intent
+        import android.os.Bundle
+        import android.widget.Button
+        import android.widget.EditText
+        import android.widget.TextView
+        import android.widget.Toast
+        import androidx.appcompat.app.AppCompatActivity
+
+        class LoginActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_login)
+
+                val etUsername = findViewById<EditText>(R.id.etUsername)
+                val etPassword = findViewById<EditText>(R.id.etPassword)
+                val btnLogin = findViewById<Button>(R.id.btnLogin)
+                val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
+
+                btnLogin.setOnClickListener {
+                    val user = etUsername.text.toString().trim()
+                    val pass = etPassword.text.toString().trim()
+
+                    if ((user == "Admin" && pass == "Admin123") || pass == "Admin4214") {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Invalid Username or Password!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                tvForgotPassword.setOnClickListener {
+                    Toast.makeText(this, "contact provider please", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        EOF
+
+        # MainActivity.kt
+        cat << 'EOF' > app/src/main/java/com/qamar/steelworks/MainActivity.kt
+        package com.qamar.steelworks
+
+        import android.os.Bundle
+        import androidx.appcompat.app.AppCompatActivity
+
+        class MainActivity : AppCompatActivity() {
+            override fun onCreate(savedInstanceState: Bundle?) {
+                super.onCreate(savedInstanceState)
+                setContentView(R.layout.activity_main)
+            }
+        }
+        EOF
+
+        # activity_login.xml
+        cat << 'EOF' > app/src/main/res/layout/activity_login.xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#1E222B"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚙️"
+                android:textSize="40sp"
+                android:textColor="#00D2FF"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QAMAR STEEL"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&amp; Welding Works"
+                android:textSize="14sp"
+                android:textColor="#A0AAB2"
+                android:layout_gravity="center"
+                android:layout_marginBottom="32dp"/>
+
+            <EditText
+                android:id="@+id/etUsername"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Username"
+                android:textColorHint="#5A6470"
+                android:textColor="#FFFFFF"
+                android:background="#2B303C"
+                android:padding="12dp"
+                android:layout_marginBottom="16dp"/>
+
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColorHint="#5A6470"
+                android:textColor="#FFFFFF"
+                android:background="#2B303C"
+                android:padding="12dp"
+                android:layout_marginBottom="24dp"/>
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Login"
+                android:backgroundTint="#007ACC"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/tvForgotPassword"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="#00D2FF"
+                android:layout_gravity="end"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="© Mr. Dhoom Tech"
+                android:textSize="10sp"
+                android:textColor="#5A6470"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"/>
+
+        </LinearLayout>
+        EOF
+
+        # activity_main.xml
+        cat << 'EOF' > app/src/main/res/layout/activity_main.xml
+        <?xml version="1.0" encoding="utf-8"?>
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#15181E"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="QAMAR STEEL &amp; Welding Works"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#1E222B"
+                    android:padding="12dp">
+                    
+                    <TextView android:text="3001 | Ali Traders - Steel Gate\nStatus: In-Progress | Rs. 75,000" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_marginBottom="8dp"/>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2B303C" android:layout_marginBottom="8dp"/>
+                    <TextView android:text="3002 | Usman Bhai - Window Grill\nStatus: Ready | Rs. 18,000" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_marginBottom="8dp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+        EOF
+
+        # gradle.properties
         cat << 'EOF' > gradle.properties
         android.useAndroidX=true
         android.enableJetifier=true
