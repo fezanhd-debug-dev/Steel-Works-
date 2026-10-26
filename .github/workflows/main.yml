@@ -25,6 +25,13 @@ jobs:
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/layout
 
+        # gradle.properties (AndroidX aur Jetifier enable karne ke liye)
+        cat << 'EOF' > gradle.properties
+        android.useAndroidX=true
+        android.enableJetifier=true
+        org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+        EOF
+
         # settings.gradle
         cat << 'EOF' > settings.gradle
         pluginManagement {
@@ -45,7 +52,7 @@ jobs:
         include ':app'
         EOF
 
-        # build.gradle (Project level - Updated AGP 8.3.0 & Kotlin 1.9.24)
+        # build.gradle (Project level)
         cat << 'EOF' > build.gradle
         plugins {
             id 'com.android.application' version '8.3.0' apply false
@@ -93,7 +100,7 @@ jobs:
         }
         EOF
 
-        # Pre-installed gradle wrapper create karein bina version conflict ke
+        # Gradlew setup
         mkdir -p gradle/wrapper
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
         echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
@@ -101,7 +108,6 @@ jobs:
         echo "zipStoreBase=GRADLE_USER_HOME" >> gradle/wrapper/gradle-wrapper.properties
         echo "zipStorePath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
         
-        # Simple bash gradle executor script (gradlew) khud likhein taake download error na ho
         cat << 'EOF' > gradlew
         #!/usr/bin/env sh
         exec gradle "$@"
