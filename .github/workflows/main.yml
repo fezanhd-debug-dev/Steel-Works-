@@ -21,35 +21,11 @@ jobs:
 
     - name: Create Complete Android Project Structure
       run: |
-        # Gradle project directories banayein
+        # Directories banayein
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/layout
-        mkdir -p app/src/main/res/mipmap-hdpi
 
-        # build.gradle (Project level)
-        cat << 'EOF' > build.gradle
-        buildscript {
-            repositories {
-                google()
-                mavenCentral()
-            }
-            dependencies {
-                classpath 'com.android.tools.build:gradle:8.2.0'
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
-            }
-        }
-        allprojects {
-            repositories {
-                google()
-                mavenCentral()
-            }
-        }
-        task clean(type: Delete) {
-            delete rootProject.buildDir
-        }
-        EOF
-
-        # settings.gradle
+        # settings.gradle (Repositories yahan hongi)
         cat << 'EOF' > settings.gradle
         pluginManagement {
             repositories {
@@ -67,6 +43,17 @@ jobs:
         }
         rootProject.name = "Qamar Steel Works"
         include ':app'
+        EOF
+
+        # build.gradle (Project level - No repositories here)
+        cat << 'EOF' > build.gradle
+        plugins {
+            id 'com.android.application' version '8.2.0' apply false
+            id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+        }
+        task clean(type: Delete) {
+            delete rootProject.buildDir
+        }
         EOF
 
         # build.gradle (App level)
@@ -106,7 +93,7 @@ jobs:
         }
         EOF
 
-        # Gradle Wrapper files generate karein
+        # Gradle Wrapper generate karein
         gradle wrapper --gradle-version 8.4
         chmod +x gradlew
 
