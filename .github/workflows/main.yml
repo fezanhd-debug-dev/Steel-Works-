@@ -3,8 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,25 +19,102 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Generate Android Project Structure & Gradle Wrapper
+    - name: Create Complete Android Project Structure
       run: |
-        # Agar root mein app folder hai toh theek, warna basic gradle wrapper setup create karein
-        mkdir -p gradle/wrapper
-        cat << 'EOF' > gradle/wrapper/gradle-wrapper.properties
-        distributionBase=GRADLE_USER_HOME
-        distributionPath=wrapper/dists
-        distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
-        systemProp.file.encoding=UTF-8
-        zipStoreBase=GRADLE_USER_HOME
-        zipStorePath=wrapper/dists
+        # Gradle project directories banayein
+        mkdir -p app/src/main/java/com/qamar/steelworks
+        mkdir -p app/src/main/res/layout
+        mkdir -p app/src/main/res/mipmap-hdpi
+
+        # build.gradle (Project level)
+        cat << 'EOF' > build.gradle
+        buildscript {
+            repositories {
+                google()
+                mavenCentral()
+            }
+            dependencies {
+                classpath 'com.android.tools.build:gradle:8.2.0'
+                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+            }
+        }
+        allprojects {
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        task clean(type: Delete) {
+            delete rootProject.buildDir
+        }
         EOF
 
-        # Create gradlew script executable
-        gradle wrapper --gradle-version 8.7 || true
-        
-    - name: Make gradlew executable
-      run: chmod +x gradlew || true
+        # settings.gradle
+        cat << 'EOF' > settings.gradle
+        pluginManagement {
+            repositories {
+                google()
+                mavenCentral()
+                gradlePluginPortal()
+            }
+        }
+        dependencyResolutionManagement {
+            repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+            repositories {
+                google()
+                mavenCentral()
+            }
+        }
+        rootProject.name = "Qamar Steel Works"
+        include ':app'
+        EOF
 
-    - name: Build Debug APK
+        # build.gradle (App level)
+        cat << 'EOF' > app/build.gradle
+        plugins {
+            id 'com.android.application'
+            id 'org.jetbrains.kotlin.android'
+        }
+        android {
+            namespace 'com.qamar.steelworks'
+            compileSdk 34
+            defaultConfig {
+                applicationId "com.qamar.steelworks"
+                minSdk 24
+                targetSdk 34
+                versionCode 1
+                versionName "1.0"
+            }
+            buildTypes {
+                release {
+                    minifyEnabled false
+                }
+            }
+            compileOptions {
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
+            }
+            kotlinOptions {
+                jvmTarget = '17'
+            }
+        }
+        dependencies {
+            implementation 'androidx.core:core-ktx:1.12.0'
+            implementation 'androidx.appcompat:appcompat:1.6.1'
+            implementation 'com.google.android.material:material:1.11.0'
+            implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+        }
+        EOF
+
+        # Gradle Wrapper files generate karein
+        gradle wrapper --gradle-version 8.4
+        chmod +x gradlew
+
+    - name: Build APK with Gradle
       run: ./gradlew assembleDebug
-      continue-on-error: true
+
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: QamarSteelWorks-APK
+        path: app/build/outputs/apk/debug/app-debug.apk
