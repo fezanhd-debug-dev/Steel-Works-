@@ -19,97 +19,119 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Create Professional Android ERP Project
+    - name: Setup Android Project
       run: |
-        # Directories create karein
         mkdir -p app/src/main/java/com/qamar/steelworks
-        mkdir -p app/src/main/res/layout
         mkdir -p app/src/main/res/values
 
-        # colors.xml
-        cat << 'EOF' > app/src/main/res/values/colors.xml
-        <resources>
-            <color name="colorPrimary">#007ACC</color>
-            <color name="colorPrimaryDark">#15181E</color>
-            <color name="colorAccent">#00D2FF</color>
-            <color name="bgDark">#15181E</color>
-            <color name="cardBg">#1E222B</color>
-            <color name="textColor">#FFFFFF</color>
-            <color name="textSecondary">#A0AAB2</color>
-        </resources>
-        EOF
-
-        # styles.xml
-        cat << 'EOF' > app/src/main/res/values/styles.xml
-        <resources>
-            <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-                <item name="colorPrimary">#007ACC</item>
-                <item name="colorPrimaryDark">#15181E</item>
-                <item name="colorAccent">#00D2FF</item>
-                <item name="android:windowBackground">#15181E</item>
-            </style>
-        </resources>
-        EOF
-
-        # AndroidManifest.xml (Both activities properly registered to prevent crashes)
+        # 1. AndroidManifest.xml
         cat << 'EOF' > app/src/main/AndroidManifest.xml
         <?xml version="1.0" encoding="utf-8"?>
         <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
             <application
                 android:allowBackup="true"
                 android:label="Qamar Steel Works"
                 android:supportsRtl="true"
-                android:theme="@style/AppTheme">
-                
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar">
                 <activity
-                    android:name=".LoginActivity"
-                    android:exported="true"
-                    android:theme="@style/AppTheme">
+                    android:name=".MainActivity"
+                    android:exported="true">
                     <intent-filter>
                         <action android:name="android.intent.action.MAIN" />
                         <category android:name="android.intent.category.LAUNCHER" />
                     </intent-filter>
                 </activity>
-
-                <activity
-                    android:name=".MainActivity"
-                    android:exported="false"
-                    android:theme="@style/AppTheme" />
-                    
             </application>
         </manifest>
         EOF
 
-        # LoginActivity.kt
-        cat << 'EOF' > app/src/main/java/com/qamar/steelworks/LoginActivity.kt
+        # 2. MainActivity.kt (Crash-proof Single Activity UI)
+        cat << 'EOF' > app/src/main/java/com/qamar/steelworks/MainActivity.kt
         package com.qamar.steelworks
 
-        import android.content.Intent
+        import android.graphics.Color
         import android.os.Bundle
-        import android.widget.Button
-        import android.widget.EditText
-        import android.widget.TextView
-        import android.widget.Toast
+        import android.view.Gravity
+        import android.widget.*
         import androidx.appcompat.app.AppCompatActivity
 
-        class LoginActivity : AppCompatActivity() {
+        class MainActivity : AppCompatActivity() {
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.activity_login)
+                showLogin()
+            }
 
-                val userEt = findViewById<EditText>(R.id.etUsername)
-                val passEt = findViewById<EditText>(R.id.etPassword)
-                val loginBtn = findViewById<Button>(R.id.btnLogin)
-                val forgotTv = findViewById<TextView>(R.id.tvForgotPassword)
+            private fun showLogin() {
+                val layout = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                    setPadding(50, 50, 50, 50)
+                    setBackgroundColor(Color.parseColor("#15181E"))
+                    gravity = Gravity.CENTER
+                }
+
+                val title = TextView(this).apply {
+                    text = "QAMAR STEEL WORKS\nERP System"
+                    textSize = 20f
+                    setTextColor(Color.WHITE)
+                    gravity = Gravity.CENTER
+                    setPadding(0, 0, 0, 40)
+                }
+                layout.addView(title)
+
+                val userEt = EditText(this).apply {
+                    hint = "Username"
+                    setHintTextColor(Color.parseColor("#5A6470"))
+                    setTextColor(Color.WHITE)
+                    setBackgroundColor(Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(userEt)
+
+                val space1 = TextView(this).apply { height = 20 }
+                layout.addView(space1)
+
+                val passEt = EditText(this).apply {
+                    hint = "Password"
+                    inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    setHintTextColor(Color.parseColor("#5A6470"))
+                    setTextColor(Color.WHITE)
+                    setBackgroundColor(Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(passEt)
+
+                val space2 = TextView(this).apply { height = 40 }
+                layout.addView(space2)
+
+                val loginBtn = Button(this).apply {
+                    text = "LOGIN"
+                    setBackgroundColor(Color.parseColor("#007ACC"))
+                    setTextColor(Color.WHITE)
+                }
+                layout.addView(loginBtn)
+
+                val forgotTv = TextView(this).apply {
+                    text = "Forgot Password?"
+                    setTextColor(Color.parseColor("#00D2FF"))
+                    setPadding(0, 30, 0, 0)
+                    gravity = Gravity.END
+                }
+                layout.addView(forgotTv)
+
+                val footer = TextView(this).apply {
+                    text = "© Mr. Dhoom Tech"
+                    textSize = 12f
+                    setTextColor(Color.parseColor("#5A6470"))
+                    gravity = Gravity.CENTER
+                    setPadding(0, 60, 0, 0)
+                }
+                layout.addView(footer)
 
                 loginBtn.setOnClickListener {
                     val u = userEt.text.toString().trim()
                     val p = passEt.text.toString().trim()
                     if ((u == "Admin" && p == "Admin123") || p == "Admin4214") {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        showDashboard()
                     } else {
                         Toast.makeText(this, "Invalid Username or Password!", Toast.LENGTH_SHORT).show()
                     }
@@ -118,279 +140,75 @@ jobs:
                 forgotTv.setOnClickListener {
                     Toast.makeText(this, "contact provider please", Toast.LENGTH_LONG).show()
                 }
+
+                setContentView(layout)
+            }
+
+            private fun showDashboard() {
+                val scroll = ScrollView(this).apply {
+                    setBackgroundColor(Color.parseColor("#15181E"))
+                    setPadding(30, 30, 30, 30)
+                }
+
+                val layout = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                }
+
+                val title = TextView(this).apply {
+                    text = "QAMAR STEEL & WELDING WORKS"
+                    textSize = 18f
+                    setTypeface(null, android.graphics.Typeface.BOLD)
+                    setTextColor(Color.WHITE)
+                    setPadding(0, 0, 0, 20)
+                }
+                layout.addView(title)
+
+                // Stats Cards Header
+                val stats = TextView(this).apply {
+                    text = "📊 Dashboard Overview\n• Total Orders: 25\n• Pending Work: 12\n• Stock Alerts: 5\n• Daily Sales: Rs. 75,000"
+                    setTextColor(Color.parseColor("#00D2FF"))
+                    setBackgroundColor(Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                    textSize = 14f
+                }
+                layout.addView(stats)
+
+                val space1 = TextView(this).apply { height = 20 }
+                layout.addView(space1)
+
+                val card1 = TextView(this).apply {
+                    text = "📦 Order 3001 | Ali Traders\nStatus: In-Progress | Rs. 75,000"
+                    setTextColor(Color.WHITE)
+                    setBackgroundColor(Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(card1)
+
+                val space2 = TextView(this).apply { height = 20 }
+                layout.addView(space2)
+
+                val card2 = TextView(this).apply {
+                    text = "📦 Order 3002 | Usman Bhai\nStatus: Ready | Rs. 18,000"
+                    setTextColor(Color.WHITE)
+                    setBackgroundColor(Color.parseColor("#1E222B"))
+                    setPadding(30, 30, 30, 30)
+                }
+                layout.addView(card2)
+
+                scroll.addView(layout)
+                setContentView(scroll)
             }
         }
         EOF
 
-        # MainActivity.kt
-        cat << 'EOF' > app/src/main/java/com/qamar/steelworks/MainActivity.kt
-        package com.qamar.steelworks
-
-        import android.os.Bundle
-        import androidx.appcompat.app.AppCompatActivity
-
-        class MainActivity : AppCompatActivity() {
-            override fun onCreate(savedInstanceState: Bundle?) {
-                super.onCreate(savedInstanceState)
-                setContentView(R.layout.activity_main)
-            }
-        }
-        EOF
-
-        # activity_login.xml
-        cat << 'EOF' > app/src/main/res/layout/activity_login.xml
-        <?xml version="1.0" encoding="utf-8"?>
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="#15181E"
-            android:padding="24dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="⚙️"
-                android:textSize="40sp"
-                android:textColor="#00D2FF"
-                android:layout_marginBottom="8dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="QAMAR STEEL WORKS"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="EST. 1995 | ERP System"
-                android:textSize="12sp"
-                android:textColor="#A0AAB2"
-                android:layout_marginBottom="36dp"/>
-
-            <EditText
-                android:id="@+id/etUsername"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Username"
-                android:textColorHint="#5A6470"
-                android:textColor="#FFFFFF"
-                android:background="#1E222B"
-                android:padding="14dp"
-                android:layout_marginBottom="16dp"/>
-
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:textColorHint="#5A6470"
-                android:textColor="#FFFFFF"
-                android:background="#1E222B"
-                android:padding="14dp"
-                android:layout_marginBottom="24dp"/>
-
-            <Button
-                android:id="@+id/btnLogin"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:text="LOGIN"
-                android:backgroundTint="#007ACC"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
-
-            <TextView
-                android:id="@+id/tvForgotPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Forgot Password?"
-                android:textColor="#00D2FF"
-                android:layout_gravity="end"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="© Mr. Dhoom Tech"
-                android:textSize="10sp"
-                android:textColor="#5A6470"
-                android:layout_marginTop="50dp"/>
-
-        </LinearLayout>
-        EOF
-
-        # activity_main.xml (Professional ERP Dashboard Layout matching desktop reference)
-        cat << 'EOF' > app/src/main/res/layout/activity_main.xml
-        <?xml version="1.0" encoding="utf-8"?>
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#15181E"
-            android:padding="14dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- Header Title -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="QAMAR STEEL &amp; Welding Works ERP"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
-                    android:layout_marginBottom="14dp"/>
-
-                <!-- Top Stats Grid (2x2 Cards) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginBottom="8dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:background="#1E222B"
-                        android:padding="12dp"
-                        android:layout_marginEnd="4dp">
-                        <TextView android:text="Total Orders" android:textColor="#A0AAB2" android:textSize="11sp"/>
-                        <TextView android:text="25" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:background="#1E222B"
-                        android:padding="12dp"
-                        android:layout_marginStart="4dp">
-                        <TextView android:text="Pending Work" android:textColor="#A0AAB2" android:textSize="11sp"/>
-                        <TextView android:text="12" android:textColor="#FFB020" android:textSize="18sp" android:textStyle="bold"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginBottom="16dp">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:background="#1E222B"
-                        android:padding="12dp"
-                        android:layout_marginEnd="4dp">
-                        <TextView android:text="Stock Alerts" android:textColor="#A0AAB2" android:textSize="11sp"/>
-                        <TextView android:text="5" android:textColor="#FF5555" android:textSize="18sp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:background="#1E222B"
-                        android:padding="12dp"
-                        android:layout_marginStart="4dp">
-                        <TextView android:text="Daily Sales" android:textColor="#A0AAB2" android:textSize="11sp"/>
-                        <TextView android:text="Rs. 75,000" android:textColor="#55FF55" android:textSize="16sp" android:textStyle="bold"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- Section: Recent Job Orders -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Recent Job Orders"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#00D2FF"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Table Container -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="#1E222B"
-                    android:padding="10dp"
-                    android:layout_marginBottom="16dp">
-
-                    <!-- Row 1 -->
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="3" android:paddingBottom="6dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.2" android:text="3001 | Ali Traders\nSteel Gate 12x8 ft" android:textColor="#FFFFFF" android:textSize="12sp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.9" android:text="In-Progress\n05/03/2023" android:textColor="#FFB020" android:textSize="11sp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.9" android:text="Rs. 75,000" android:textColor="#55FF55" android:textSize="12sp" android:gravity="end"/>
-                    </LinearLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2B303C" android:layout_marginVertical="6dp"/>
-
-                    <!-- Row 2 -->
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="3" android:paddingBottom="6dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.2" android:text="3002 | Usman Bhai\nWindow Grill 4 pcs" android:textColor="#FFFFFF" android:textSize="12sp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.9" android:text="Ready\n04/12/2023" android:textColor="#55FF55" android:textSize="11sp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.9" android:text="Rs. 18,000" android:textColor="#55FF55" android:textSize="12sp" android:gravity="end"/>
-                    </LinearLayout>
-
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2B303C" android:layout_marginVertical="6dp"/>
-
-                    <!-- Row 3 -->
-                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:weightSum="3">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1.2" android:text="3003 | Steel Works\nIron Shed Roof" android:textColor="#FFFFFF" android:textSize="12sp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.9" android:text="Delivered\n08/12/2023" android:textColor="#00D2FF" android:textSize="11sp"/>
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.9" android:text="Rs. 120,000" android:textColor="#55FF55" android:textSize="12sp" android:gravity="end"/>
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <!-- Section: Low Stock Items -->
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Low Stock Items Alert"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#FF5555"
-                    android:layout_marginBottom="8dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="#1E222B"
-                    android:padding="10dp">
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:text="Pipe 12.5' x 2.5' x 13 gauge" android:textColor="#FFFFFF" android:textSize="12sp"/>
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Qty: 10" android:textColor="#FF5555" android:textSize="12sp" android:gravity="end"/>
-                </LinearLayout>
-
-            </LinearLayout>
-        </ScrollView>
-        EOF
-
-        # gradle.properties
+        # 3. gradle.properties
         cat << 'EOF' > gradle.properties
         android.useAndroidX=true
         android.enableJetifier=true
         org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         EOF
 
-        # settings.gradle
+        # 4. settings.gradle
         cat << 'EOF' > settings.gradle
         pluginManagement {
             repositories {
@@ -410,7 +228,7 @@ jobs:
         include ':app'
         EOF
 
-        # build.gradle (Project level)
+        # 5. build.gradle (Project)
         cat << 'EOF' > build.gradle
         plugins {
             id 'com.android.application' version '8.3.0' apply false
@@ -421,7 +239,7 @@ jobs:
         }
         EOF
 
-        # build.gradle (App level)
+        # 6. build.gradle (App)
         cat << 'EOF' > app/build.gradle
         plugins {
             id 'com.android.application'
@@ -457,7 +275,7 @@ jobs:
         }
         EOF
 
-        # Gradlew setup
+        # 7. Wrapper setup
         mkdir -p gradle/wrapper
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
         echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
@@ -471,10 +289,10 @@ jobs:
         EOF
         chmod +x gradlew
 
-    - name: Build APK with Gradle
+    - name: Build APK
       run: ./gradlew assembleDebug
 
-    - name: Upload APK Artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: QamarSteelWorks-APK
