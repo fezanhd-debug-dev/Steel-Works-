@@ -25,7 +25,7 @@ jobs:
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/layout
 
-        # settings.gradle (Repositories yahan hongi)
+        # settings.gradle
         cat << 'EOF' > settings.gradle
         pluginManagement {
             repositories {
@@ -45,7 +45,7 @@ jobs:
         include ':app'
         EOF
 
-        # build.gradle (Project level - No repositories here)
+        # build.gradle (Project level)
         cat << 'EOF' > build.gradle
         plugins {
             id 'com.android.application' version '8.2.0' apply false
@@ -93,8 +93,8 @@ jobs:
         }
         EOF
 
-        # Gradle Wrapper generate karein
-        gradle wrapper --gradle-version 8.4
+        # Gradle Version 8.5 Forcefully Set Karein (Compatible with Kotlin 1.9.0)
+        gradle wrapper --gradle-version 8.5
         chmod +x gradlew
 
     - name: Build APK with Gradle
