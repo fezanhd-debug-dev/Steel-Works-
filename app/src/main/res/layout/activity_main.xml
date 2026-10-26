@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#15181E"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="QAMAR STEEL &amp; Welding Works"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Stats Grid Cards -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="#1E222B"
+                android:padding="12dp"
+                android:layout_marginEnd="6dp">
+                <TextView android:text="Total Orders" android:textColor="#A0AAB2" android:textSize="12sp"/>
+                <TextView android:text="25" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="#1E222B"
+                android:padding="12dp"
+                android:layout_marginStart="6dp">
+                <TextView android:text="Pending Work" android:textColor="#A0AAB2" android:textSize="12sp"/>
+                <TextView android:text="12" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="20dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="#1E222B"
+                android:padding="12dp"
+                android:layout_marginEnd="6dp">
+                <TextView android:text="Stock Alerts" android:textColor="#A0AAB2" android:textSize="12sp"/>
+                <TextView android:text="5" android:textColor="#FF5555" android:textSize="18sp" android:textStyle="bold"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="#1E222B"
+                android:padding="12dp"
+                android:layout_marginStart="6dp">
+                <TextView android:text="Daily Sales" android:textColor="#A0AAB2" android:textSize="12sp"/>
+                <TextView android:text="Rs. 75,000" android:textColor="#55FF55" android:textSize="16sp" android:textStyle="bold"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recent Job Orders"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#1E222B"
+            android:padding="12dp">
+            
+            <TextView android:text="3001 | Ali Traders - Steel Gate\nStatus: In-Progress | Rs. 75,000" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_marginBottom="8dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2B303C" android:layout_marginBottom="8dp"/>
+            <TextView android:text="3002 | Usman Bhai - Window Grill\nStatus: Ready | Rs. 18,000" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_marginBottom="8dp"/>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#2B303C" android:layout_marginBottom="8dp"/>
+            <TextView android:text="3003 | Qamar Steel - Iron Shed\nStatus: Delivered | Rs. 120,000" android:textColor="#FFFFFF" android:textSize="13sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
