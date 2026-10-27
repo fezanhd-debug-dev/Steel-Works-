@@ -19,7 +19,7 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Android Project
+    - name: Create Functional Professional ERP Project
       run: |
         mkdir -p app/src/main/java/com/qamar/steelworks
         mkdir -p app/src/main/res/values
@@ -45,7 +45,7 @@ jobs:
         </manifest>
         EOF
 
-        # 2. MainActivity.kt (Crash-proof Single Activity UI)
+        # 2. MainActivity.kt (Fully Interactive ERP with Add Order Feature)
         cat << 'EOF' > app/src/main/java/com/qamar/steelworks/MainActivity.kt
         package com.qamar.steelworks
 
@@ -64,14 +64,15 @@ jobs:
             private fun showLogin() {
                 val layout = LinearLayout(this).apply {
                     orientation = LinearLayout.VERTICAL
-                    setPadding(50, 50, 50, 50)
+                    setPadding(60, 60, 60, 60)
                     setBackgroundColor(Color.parseColor("#15181E"))
                     gravity = Gravity.CENTER
                 }
 
                 val title = TextView(this).apply {
                     text = "QAMAR STEEL WORKS\nERP System"
-                    textSize = 20f
+                    textSize = 22f
+                    setTypeface(null, android.graphics.Typeface.BOLD)
                     setTextColor(Color.WHITE)
                     gravity = Gravity.CENTER
                     setPadding(0, 0, 0, 40)
@@ -79,11 +80,11 @@ jobs:
                 layout.addView(title)
 
                 val userEt = EditText(this).apply {
-                    hint = "Username"
+                    hint = "Username (Admin)"
                     setHintTextColor(Color.parseColor("#5A6470"))
                     setTextColor(Color.WHITE)
                     setBackgroundColor(Color.parseColor("#1E222B"))
-                    setPadding(30, 30, 30, 30)
+                    setPadding(35, 35, 35, 35)
                 }
                 layout.addView(userEt)
 
@@ -91,12 +92,12 @@ jobs:
                 layout.addView(space1)
 
                 val passEt = EditText(this).apply {
-                    hint = "Password"
+                    hint = "Password (Admin123)"
                     inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
                     setHintTextColor(Color.parseColor("#5A6470"))
                     setTextColor(Color.WHITE)
                     setBackgroundColor(Color.parseColor("#1E222B"))
-                    setPadding(30, 30, 30, 30)
+                    setPadding(35, 35, 35, 35)
                 }
                 layout.addView(passEt)
 
@@ -104,9 +105,10 @@ jobs:
                 layout.addView(space2)
 
                 val loginBtn = Button(this).apply {
-                    text = "LOGIN"
+                    text = "LOGIN TO SYSTEM"
                     setBackgroundColor(Color.parseColor("#007ACC"))
                     setTextColor(Color.WHITE)
+                    setPadding(20, 25, 20, 25)
                 }
                 layout.addView(loginBtn)
 
@@ -119,7 +121,7 @@ jobs:
                 layout.addView(forgotTv)
 
                 val footer = TextView(this).apply {
-                    text = "© Mr. Dhoom Tech"
+                    text = "© Mr. Dhoom Tech | Est. 1995"
                     textSize = 12f
                     setTextColor(Color.parseColor("#5A6470"))
                     gravity = Gravity.CENTER
@@ -147,99 +149,145 @@ jobs:
             private fun showDashboard() {
                 val scroll = ScrollView(this).apply {
                     setBackgroundColor(Color.parseColor("#15181E"))
-                    setPadding(30, 30, 30, 30)
+                    setPadding(24, 24, 24, 24)
                 }
 
-                val layout = LinearLayout(this).apply {
+                val mainLayout = LinearLayout(this).apply {
                     orientation = LinearLayout.VERTICAL
                 }
 
-                val title = TextView(this).apply {
-                    text = "QAMAR STEEL & WELDING WORKS"
+                val header = TextView(this).apply {
+                    text = "⚙️ QAMAR STEEL ERP DASHBOARD"
                     textSize = 18f
                     setTypeface(null, android.graphics.Typeface.BOLD)
                     setTextColor(Color.WHITE)
                     setPadding(0, 0, 0, 20)
                 }
-                layout.addView(title)
+                mainLayout.addView(header)
 
-                // Stats Cards Header
-                val stats = TextView(this).apply {
-                    text = "📊 Dashboard Overview\n• Total Orders: 25\n• Pending Work: 12\n• Stock Alerts: 5\n• Daily Sales: Rs. 75,000"
-                    setTextColor(Color.parseColor("#00D2FF"))
+                // Stats Overview Box
+                val statsBox = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
                     setBackgroundColor(Color.parseColor("#1E222B"))
-                    setPadding(30, 30, 30, 30)
+                    setPadding(20, 20, 20, 20)
+                }
+                val statsText = TextView(this).apply {
+                    text = "📊 Live Statistics\n• Total Orders: 3\n• Pending Work: 2\n• Stock Alerts: 1\n• Daily Sales: Rs. 93,000"
+                    setTextColor(Color.parseColor("#00D2FF"))
                     textSize = 14f
                 }
-                layout.addView(stats)
+                statsBox.addView(statsText)
+                mainLayout.addView(statsBox)
 
-                val space1 = TextView(this).apply { height = 20 }
-                layout.addView(space1)
+                val space1 = TextView(this).apply { height = 25 }
+                mainLayout.addView(space1)
 
-                val card1 = TextView(this).apply {
-                    text = "📦 Order 3001 | Ali Traders\nStatus: In-Progress | Rs. 75,000"
+                // Action Button: Add New Order
+                val addOrderBtn = Button(this).apply {
+                    text = "+ Add New Job Order"
+                    setBackgroundColor(Color.parseColor("#007ACC"))
                     setTextColor(Color.WHITE)
-                    setBackgroundColor(Color.parseColor("#1E222B"))
-                    setPadding(30, 30, 30, 30)
                 }
-                layout.addView(card1)
+                mainLayout.addView(addOrderBtn)
 
-                val space2 = TextView(this).apply { height = 20 }
-                layout.addView(space2)
+                val space2 = TextView(this).apply { height = 25 }
+                mainLayout.addView(space2)
 
-                val card2 = TextView(this).apply {
-                    text = "📦 Order 3002 | Usman Bhai\nStatus: Ready | Rs. 18,000"
-                    setTextColor(Color.WHITE)
-                    setBackgroundColor(Color.parseColor("#1E222B"))
-                    setPadding(30, 30, 30, 30)
+                val sectionTitle = TextView(this).apply {
+                    text = "Active Job Orders & Quotations"
+                    textSize = 15f
+                    setTypeface(null, android.graphics.Typeface.BOLD)
+                    setTextColor(Color.parseColor("#00D2FF"))
+                    setPadding(0, 0, 0, 15)
                 }
-                layout.addView(card2)
+                mainLayout.addView(sectionTitle)
 
-                scroll.addView(layout)
+                // Orders List Container
+                val ordersContainer = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
+                }
+                mainLayout.addView(ordersContainer)
+
+                // Initial Mock Orders
+                fun addOrderView(orderNo: String, client: String, status: String, amount: String) {
+                    val card = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setBackgroundColor(Color.parseColor("#1E222B"))
+                        setPadding(20, 20, 20, 20)
+                    }
+                    val tv = TextView(this).apply {
+                        text = "📦 Order #$orderNo | $client\nStatus: $status | Amount: $amount"
+                        setTextColor(Color.WHITE)
+                        textSize = 13f
+                    }
+                    card.addView(tv)
+                    
+                    val sp = TextView(this).apply { height = 15 }
+                    ordersContainer.addView(card)
+                    ordersContainer.addView(sp)
+                }
+
+                addOrderView("3001", "Ali Traders (Steel Gate)", "In-Progress", "Rs. 75,000")
+                addOrderView("3002", "Usman Bhai (Window Grill)", "Ready", "Rs. 18,000")
+
+                // Button Click Listener to Add Dynamic Order
+                addOrderBtn.setOnClickListener {
+                    val dialogLayout = LinearLayout(this).apply {
+                        orientation = LinearLayout.VERTICAL
+                        setPadding(40, 40, 40, 40)
+                    }
+                    val inputClient = EditText(this).apply { hint = "Client Name & Item"; setTextColor(Color.BLACK) }
+                    val inputAmount = EditText(this).apply { hint = "Amount (e.g. Rs. 25,000)"; setTextColor(Color.BLACK) }
+                    
+                    dialogLayout.addView(inputClient)
+                    dialogLayout.addView(inputAmount)
+
+                    android.app.AlertDialog.Builder(this)
+                        .setTitle("Create New Job Order")
+                        .setView(dialogLayout)
+                        .setPositiveButton("Save") { _, _ ->
+                            val c = inputClient.text.toString().ifEmpty { "General Client" }
+                            val a = inputAmount.text.toString().ifEmpty { "Rs. 10,000" }
+                            addOrderView("300${ordersContainer.childCount / 2 + 1}", c, "New Order", a)
+                            Toast.makeText(this, "Order Created Successfully!", Toast.LENGTH_SHORT).show()
+                        }
+                        .setNegativeButton("Cancel", null)
+                        .show()
+                }
+
+                scroll.addView(mainLayout)
                 setContentView(scroll)
             }
         }
         EOF
 
-        # 3. gradle.properties
+        # 3. gradle.properties & configs
         cat << 'EOF' > gradle.properties
         android.useAndroidX=true
         android.enableJetifier=true
         org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         EOF
 
-        # 4. settings.gradle
         cat << 'EOF' > settings.gradle
         pluginManagement {
-            repositories {
-                google()
-                mavenCentral()
-                gradlePluginPortal()
-            }
+            repositories { google(); mavenCentral(); gradlePluginPortal() }
         }
         dependencyResolutionManagement {
             repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-            repositories {
-                google()
-                mavenCentral()
-            }
+            repositories { google(); mavenCentral() }
         }
         rootProject.name = "Qamar Steel Works"
         include ':app'
         EOF
 
-        # 5. build.gradle (Project)
         cat << 'EOF' > build.gradle
         plugins {
             id 'com.android.application' version '8.3.0' apply false
             id 'org.jetbrains.kotlin.android' version '1.9.24' apply false
         }
-        task clean(type: Delete) {
-            delete rootProject.buildDir
-        }
+        task clean(type: Delete) { delete rootProject.buildDir }
         EOF
 
-        # 6. build.gradle (App)
         cat << 'EOF' > app/build.gradle
         plugins {
             id 'com.android.application'
@@ -255,18 +303,12 @@ jobs:
                 versionCode 1
                 versionName "1.0"
             }
-            buildTypes {
-                release {
-                    minifyEnabled false
-                }
-            }
+            buildTypes { release { minifyEnabled false } }
             compileOptions {
                 sourceCompatibility JavaVersion.VERSION_17
                 targetCompatibility JavaVersion.VERSION_17
             }
-            kotlinOptions {
-                jvmTarget = '17'
-            }
+            kotlinOptions { jvmTarget = '17' }
         }
         dependencies {
             implementation 'androidx.core:core-ktx:1.12.0'
@@ -275,7 +317,6 @@ jobs:
         }
         EOF
 
-        # 7. Wrapper setup
         mkdir -p gradle/wrapper
         echo "distributionBase=GRADLE_USER_HOME" > gradle/wrapper/gradle-wrapper.properties
         echo "distributionPath=wrapper/dists" >> gradle/wrapper/gradle-wrapper.properties
